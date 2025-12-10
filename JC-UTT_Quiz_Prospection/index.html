@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="jc2.png">
+    <title>Quiz Prospection JC-UTT</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+ body {
+    font-family: Arial, sans-serif;
+    background: url('bg.png') repeat;
+    background-size: 400px 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 1000px;
+            width: 100%;
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 15px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .video-container {
+            width: 100%;
+            margin-bottom: 30px;
+            background: #000;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .quiz-section {
+            display: block;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-section.active {
+            opacity: 1;
+            height: auto;
+        }
+
+        .question-info {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            border-color: #333;
+            background: #f9f9f9;
+        }
+
+        .option.selected {
+            border-color: #333;
+            background: #333;
+            color: white;
+        }
+
+        .option.correct {
+            border-color: #4caf50;
+            background: #4caf50;
+            color: white;
+        }
+
+        .option.incorrect {
+            border-color: #f44336;
+            background: #f44336;
+            color: white;
+        }
+
+        .feedback {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+        }
+
+        .feedback.incorrect {
+            background: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #f44336;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-submit {
+            background: #333;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background: #555;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: #667eea;
+            color: white;
+            min-width: 200px;
+        }
+
+        .btn-next:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .final-score {
+            display: none;
+            text-align: center;
+        }
+
+        .btn-next {
+            background: #333;
+            color: white;
+            width: 100%;
+            display: none;
+        }
+
+        .btn-next:hover {
+            background: #555;
+        }
+
+        .final-section {
+            display: none;
+            text-align: center;
+        }
+
+        .final-section.active {
+            display: block;
+        }
+
+        .final-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .final-score {
+            font-size: 60px;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0;
+        }
+
+        .final-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .btn-restart {
+            background: #333;
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+        }
+
+        .btn-restart:hover {
+            background: #555;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            font-size: 16px;
+        }
+
+        @keyframes fadeInQuestion {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInOption {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-text {
+            animation: fadeInQuestion 0.6s ease-out;
+        }
+
+        .option {
+            animation: fadeInOption 0.5s ease-out;
+        }
+
+        .option:nth-child(1) {
+            animation-delay: 0.4s;
+        }
+
+        .option:nth-child(2) {
+            animation-delay: 0.6s;
+        }
+
+        .option:nth-child(3) {
+            animation-delay: 0.8s;
+        }
+
+        .option:nth-child(4) {
+            animation-delay: 1s;
+        }
+
+        .option {
+            opacity: 0;
+        }
+
+        .option.animated {
+            opacity: 1;
+        }
+
+        /* Message affiché uniquement sur mobile */
+#mobileBlock {
+    display: none;
+    text-align: center;
+    padding: 40px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    background: #333;
+    border-radius: 10px;
+    max-width: 600px;
+}
+
+/* Bloc mobile : si écran < 768px */
+@media (max-width: 768px) {
+
+    body {
+        background: #111 !important;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* Cacher tout le site */
+    .container,
+    footer {
+        display: none !important;
+    }
+
+    /* Afficher le message mobile */
+    #mobileBlock {
+        display: block;
+    }
+}
+/* Image fixe à droite */
+.side-image-link {
+    position: fixed;
+    right: 25px;
+    bottom: 40px;
+    z-index: 999;
+    display: block;
+    text-decoration: none;
+}
+
+/* Image style + animation */
+.side-image {
+    width: 300px;
+    height: auto;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+/* Animation au survol : agrandissement + ombre */
+.side-image:hover {
+    transform: scale(1.15);
+}
+
+/* On masque l'image sur mobile (déjà bloqué de toute façon) */
+@media (max-width: 768px) {
+    .side-image-link {
+        display: none;
+    }
+}
+    </style>
+</head>
+
+    <div class="container">
+        <div class="header">
+        <a href="https://jc-utt.fr" target="_blank">
+            <img class="title" src="logo.png" style="width: 20vh;   height: auto; padding: 10px;"></img>
+        </a>
+            <div class="title">Quiz Prospection</div>
+            <div class="score" style="padding: 10px;">Score: <span id="scoreValue">0</span>/16</div>
+        </div>
+
+        <!-- Vidéo -->
+        <div class="video-container" id="videoContainer">
+            <div class="loading" id="loadingText">Chargement...</div>
+            <video id="quizVideo" style="display: none;" autoplay playsinline muted>
+                <source src="video.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <!-- Quiz -->
+        <div class="quiz-section" id="quizSection">
+            <div class="question-info" id="questionInfo"></div>
+            <div class="question-text" id="questionText"></div>
+            <div class="options" id="optionsContainer"></div>
+            <div class="feedback" id="feedback"></div>
+            <div class="button-group">
+                <button class="btn-submit" id="submitBtn" onclick="submitAnswer()">Répondre</button>
+                <button class="btn-next" id="nextBtn" onclick="nextQuestion()">Suivant</button>
+            </div>
+        </div>
+
+        <!-- Score final -->
+        <div class="final-section" id="finalSection">
+            <div class="final-title">Quiz Terminé!</div>
+            <div class="final-score" id="finalScore">0/5</div>
+            <div class="final-message" id="finalMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()">Recommencer</button>
+        </div>
+    </div>
+
+    <a href="https://ton-lien-ici.com" target="_blank" class="side-image-link">
+    <img src="jc1.png" class="side-image">
+</a>
+
+    <script src="quiz.js"></script>
+
+    <footer style="
+    text-align: center;
+    margin-top: 150px;
+    padding: 15px 0;
+    font-size: 14px;
+    color: #e8f5e9;
+    opacity: 0.8;
+">
+    Créé avec ❤️ par <a href="https://www.matheoallabert.com" target="_blank" style="color: inherit;">Mathéo Allabert</a>
+</footer>
+</body>
+<div id="mobileBlock">
+    Pour une utilisation optimale,<br>
+    veuillez utiliser une tablette ou un ordinateur.
+</div>
+</html>
