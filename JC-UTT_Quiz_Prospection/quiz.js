@@ -1,4 +1,10 @@
 const questions = [
+        {
+        question: "Bienvenue au quiz de prospection de Junior Conseil UTT ! Prêt à tester vos connaissances ?",
+        options: ["Oui, je suis prêt à devenir un expert en prospection !", "Non, je préfère rester dans l'ignorance éternelle."],
+        correct: 0,
+        video: "video0.mp4"
+    },
     {
         question: "Pourquoi travailler avec une Junior plutôt qu'une entreprise classique ?",
         options: ["Parce que les Juniors sont légalement obligées de proposer les prix les plus bas du marché", "Pour bénéficier d'expertise technique actualisée et d'un cadre légal structuré", "Parce qu'une Junior peut réaliser des missions non réglementées par défaut", "Parce que les consultants sont secrètement des super-héros masqués"],
@@ -106,6 +112,19 @@ let state = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Démarrer la musique de fond
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    backgroundMusic.volume = 0.3; // Volume à 30%
+    
+    // Tenter de démarrer la musique automatiquement
+    backgroundMusic.play().catch(() => {
+        // Si l'autoplay échoue, on démarre la musique au premier clic
+        document.body.addEventListener('click', function startMusic() {
+            backgroundMusic.play();
+            document.body.removeEventListener('click', startMusic);
+        }, { once: true });
+    });
+    
     startNewVideo();
 });
 
@@ -121,28 +140,32 @@ function startNewVideo() {
     // Cacher le quiz
     document.getElementById('quizSection').classList.remove('active');
     document.getElementById('finalSection').classList.remove('active');
+    document.getElementById('videoQuestionOverlay').classList.remove('show');
 
     const video = document.getElementById('quizVideo');
     const videoSource = video.querySelector('source');
     const loadingText = document.getElementById('loadingText');
+    const questionOverlay = document.getElementById('videoQuestionOverlay');
+    const videoQuestionText = document.getElementById('videoQuestionText');
 
     video.style.display = 'none';
     loadingText.style.display = 'block';
 
-    // Charger la vidéo correspondante à la question actuelle
-    const currentVideoSrc = questions[state.currentQuestion].video;
-    
-    // Changer la source de la vidéo
-    videoSource.src = currentVideoSrc;
-    video.load(); // Important : recharger la vidéo avec la nouvelle source
+    // Afficher la question dans l'overlay
+    const currentQuestion = questions[state.currentQuestion];
+    videoQuestionText.textContent = currentQuestion.question;
 
-    // Simule le chargement et lance la vidéo
+    // Charger la vidéo correspondante
+    const currentVideoSrc = currentQuestion.video;
+    videoSource.src = currentVideoSrc;
+    video.load();
+
+    // Lancer la vidéo
     setTimeout(() => {
         loadingText.style.display = 'none';
         video.style.display = 'block';
         video.currentTime = 0;
         
-        // Au premier lancement, on laisse le muted (autoplay), sinon on retire le son
         if (!state.firstLoad) {
             video.muted = false;
         }
@@ -153,11 +176,21 @@ function startNewVideo() {
             video.muted = false;
             video.play();
         });
+
+        // Afficher la question après 1 seconde
+        setTimeout(() => {
+            questionOverlay.classList.add('show');
+        }, 1000);
     }, 300);
 
     // Écoute la fin de la vidéo
     video.onended = () => {
-        showQuiz();
+        // Masquer l'overlay de question
+        questionOverlay.classList.remove('show');
+        // Afficher le quiz avec les options
+        setTimeout(() => {
+            showQuiz();
+        }, 500);
     };
 }
 

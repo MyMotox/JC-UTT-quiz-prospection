@@ -12,17 +12,17 @@
             box-sizing: border-box;
         }
 
- body {
-    font-family: Arial, sans-serif;
-    background: url('bg.png') repeat;
-    background-size: 400px 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    padding: 20px;
-}
+        body {
+            font-family: Arial, sans-serif;
+            background: url('bg.png') repeat;
+            background-size: 400px 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
         .container {
             background: white;
@@ -60,12 +60,37 @@
             background: #000;
             border-radius: 6px;
             overflow: hidden;
+            position: relative;
         }
 
         video {
             width: 100%;
             height: auto;
             display: block;
+        }
+
+        /* Overlay de la question sur la vidéo */
+        .video-question-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(46, 44, 130, 0.9) 0%, rgba(52, 67, 159, 0.7) 50%, transparent 100%);
+            padding: 30px 20px 20px 20px;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .video-question-overlay.show {
+            opacity: 1;
+        }
+
+        .video-question-text {
+            font-size: 22px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+            line-height: 1.4;
         }
 
         .quiz-section {
@@ -190,23 +215,6 @@
         }
 
         .btn-next {
-            background: #667eea;
-            color: white;
-            min-width: 200px;
-        }
-
-        .btn-next:hover {
-            background: #5568d3;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .final-score {
-            display: none;
-            text-align: center;
-        }
-
-        .btn-next {
             background: #333;
             color: white;
             width: 100%;
@@ -317,89 +325,89 @@
             opacity: 1;
         }
 
-        /* Message affiché uniquement sur mobile */
-#mobileBlock {
-    display: none;
-    text-align: center;
-    padding: 40px;
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-    background: #333;
-    border-radius: 10px;
-    max-width: 600px;
-}
+        #mobileBlock {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background: #333;
+            border-radius: 10px;
+            max-width: 600px;
+        }
 
-/* Bloc mobile : si écran < 768px */
-@media (max-width: 768px) {
+        @media (max-width: 768px) {
+            body {
+                background: #111 !important;
+                min-height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
 
-    body {
-        background: #111 !important;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+            .container,
+            footer {
+                display: none !important;
+            }
 
-    /* Cacher tout le site */
-    .container,
-    footer {
-        display: none !important;
-    }
+            #mobileBlock {
+                display: block;
+            }
+        }
 
-    /* Afficher le message mobile */
-    #mobileBlock {
-        display: block;
-    }
-}
-/* Image fixe à droite */
-.side-image-link {
-    position: fixed;
-    right: 25px;
-    bottom: 40px;
-    z-index: 999;
-    display: block;
-    text-decoration: none;
-}
+        .side-image-link {
+            position: fixed;
+            right: 25px;
+            bottom: 40px;
+            z-index: 999;
+            display: block;
+            text-decoration: none;
+        }
 
-/* Image style + animation */
-.side-image {
-    width: 300px;
-    height: auto;
-    border-radius: 10px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-}
+        .side-image {
+            width: 300px;
+            height: auto;
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
 
-/* Animation au survol : agrandissement + ombre */
-.side-image:hover {
-    transform: scale(1.15);
-}
+        .side-image:hover {
+            transform: scale(1.15);
+        }
 
-/* On masque l'image sur mobile (déjà bloqué de toute façon) */
-@media (max-width: 768px) {
-    .side-image-link {
-        display: none;
-    }
-}
+        @media (max-width: 768px) {
+            .side-image-link {
+                display: none;
+            }
+        }
     </style>
 </head>
+<body>
+    <!-- Musique de fond -->
+    <audio id="backgroundMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
 
     <div class="container">
         <div class="header">
-        <a href="https://jc-utt.fr" target="_blank">
-            <img class="title" src="logo.png" style="width: 20vh;   height: auto; padding: 10px;"></img>
-        </a>
+            <a href="https://jc-utt.fr" target="_blank">
+                <img class="title" src="logo.png" style="width: 20vh; height: auto; padding: 10px;">
+            </a>
             <div class="title">Quiz Prospection</div>
-            <div class="score" style="padding: 10px;">Score: <span id="scoreValue">0</span>/16</div>
+            <div class="score" style="padding: 10px;">Score: <span id="scoreValue">0</span>/17</div>
         </div>
 
-        <!-- Vidéo -->
+        <!-- Vidéo avec question en overlay -->
         <div class="video-container" id="videoContainer">
             <div class="loading" id="loadingText">Chargement...</div>
             <video id="quizVideo" style="display: none;" autoplay playsinline muted>
                 <source src="video.mp4" type="video/mp4">
             </video>
+            <div class="video-question-overlay" id="videoQuestionOverlay">
+                <div class="video-question-text" id="videoQuestionText"></div>
+            </div>
         </div>
 
         <!-- Quiz -->
@@ -417,31 +425,32 @@
         <!-- Score final -->
         <div class="final-section" id="finalSection">
             <div class="final-title">Quiz Terminé!</div>
-            <div class="final-score" id="finalScore">0/5</div>
+            <div class="final-score" id="finalScore">0/16</div>
             <div class="final-message" id="finalMessage"></div>
             <button class="btn-restart" onclick="restartQuiz()">Recommencer</button>
         </div>
     </div>
 
     <a href="https://ton-lien-ici.com" target="_blank" class="side-image-link">
-    <img src="jc1.png" class="side-image">
-</a>
+        <img src="jc1.png" class="side-image">
+    </a>
 
     <script src="quiz.js"></script>
 
     <footer style="
-    text-align: center;
-    margin-top: 150px;
-    padding: 15px 0;
-    font-size: 14px;
-    color: #e8f5e9;
-    opacity: 0.8;
-">
-    Créé avec ❤️ par <a href="https://www.matheoallabert.com" target="_blank" style="color: inherit;">Mathéo Allabert</a>
-</footer>
+        text-align: center;
+        margin-top: 150px;
+        padding: 15px 0;
+        font-size: 14px;
+        color: #e8f5e9;
+        opacity: 0.8;
+    ">
+        Créé avec ❤️ par <a href="https://www.matheoallabert.com" target="_blank" style="color: inherit;">Mathéo Allabert</a>
+    </footer>
+
+    <div id="mobileBlock">
+        Pour une utilisation optimale,<br>
+        veuillez utiliser une tablette ou un ordinateur.
+    </div>
 </body>
-<div id="mobileBlock">
-    Pour une utilisation optimale,<br>
-    veuillez utiliser une tablette ou un ordinateur.
-</div>
 </html>
