@@ -101,6 +101,7 @@ const questions = [
         correct: 1,
         video: "video16.mp4"
     }
+
 ];
 
 let state = {
@@ -337,4 +338,71 @@ function restartQuiz() {
 
     document.getElementById('scoreValue').textContent = '0';
     startNewVideo();
+}
+
+function restartQuiz() {
+    state = {
+        currentQuestion: 0,
+        score: 0,
+        selectedAnswer: null,
+        answered: false,
+        firstLoad: true
+    };
+
+    document.getElementById('scoreValue').textContent = '0';
+    startNewVideo();
+}
+
+function shareResult(event) {
+    const percentage = (state.score / questions.length) * 100;
+    const scoreText = `${state.score}/${questions.length}`;
+    
+    let emoji = '';
+    if (percentage === 100) {
+        emoji = '🎉';
+    } else if (percentage >= 75) {
+        emoji = '👍';
+    } else if (percentage >= 50) {
+        emoji = '😊';
+    } else if (percentage >= 25) {
+        emoji = '💪';
+    } else {
+        emoji = '🎓';
+    }
+    
+    const shareText = `J'ai fait ${scoreText} au Quiz Prospection JC-UTT ! ${emoji}\n\nÀ ton tour de tester tes connaissances :\nhttps://votre-site-quiz.com`;
+    
+    // Feedback visuel immédiat
+    const btn = event.target;
+    const originalText = btn.textContent;
+    btn.textContent = '✓ Copié !';
+    btn.style.background = '#2e7d32';
+    
+    // Tenter de copier dans le presse-papier
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareText).catch(() => {
+            // Même en cas d'erreur, on garde le message "Copié"
+            console.log('Clipboard API échouée, texte préparé');
+        });
+    } else {
+        // Fallback pour navigateurs anciens : créer un textarea temporaire
+        const textarea = document.createElement('textarea');
+        textarea.value = shareText;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+        } catch (err) {
+            console.log('Copie échouée');
+        }
+        document.body.removeChild(textarea);
+    }
+    
+    // Réinitialiser le bouton après 2 secondes
+    setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '#4caf50';
+    }, 2000);
 }

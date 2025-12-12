@@ -26,7 +26,7 @@
 
         .container {
             background: white;
-            border-radius: 8px;
+            border-radius: 8px; 
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
             max-width: 1000px;
             width: 100%;
@@ -264,6 +264,25 @@
             background: #555;
         }
 
+        .btn-share {
+            background: #4caf50;
+            color: white;
+            padding: 12px 30px;
+            font-size: 18px;
+            margin-left: 10px;
+        }
+
+        .btn-share:hover {
+            background: #45a049;
+        }
+
+        .final-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .loading {
             text-align: center;
             padding: 20px;
@@ -427,7 +446,10 @@
             <div class="final-title">Quiz Terminé!</div>
             <div class="final-score" id="finalScore">0/16</div>
             <div class="final-message" id="finalMessage"></div>
-            <button class="btn-restart" onclick="restartQuiz()">Recommencer</button>
+            <div class="final-buttons">
+                <button class="btn-restart" onclick="restartQuiz()">Recommencer</button>
+                <button class="btn-share" onclick="shareResult(event)">Partager mon résultat</button>
+            </div>
         </div>
     </div>
 
