@@ -290,6 +290,84 @@
             font-size: 16px;
         }
 
+        /* Pop-up de bienvenue */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .welcome-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .welcome-popup {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: popupAppear 0.4s ease-out;
+        }
+
+        @keyframes popupAppear {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .welcome-popup h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .welcome-popup .icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-popup p {
+            font-size: 18px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .welcome-popup .btn-start {
+            background: #4caf50;
+            color: white;
+            padding: 15px 40px;
+            font-size: 18px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .welcome-popup .btn-start:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+
         @keyframes fadeInQuestion {
             from {
                 opacity: 0;
@@ -373,6 +451,10 @@
             #mobileBlock {
                 display: block;
             }
+
+            .welcome-overlay {
+                display: none !important;
+            }
         }
 
         .side-image-link {
@@ -404,6 +486,17 @@
     </style>
 </head>
 <body>
+    <!-- Pop-up de bienvenue -->
+    <div class="welcome-overlay" id="welcomeOverlay">
+        <div class="welcome-popup">
+            <div class="icon">🦆 💸</div>
+            <h2>Bienvenue au Quiz JC-UTT !</h2>
+            <p>Pour une expérience optimale, veuillez autoriser le <strong>son</strong> et la <strong>lecture des vidéos</strong>.</p>
+            <p style="font-size: 16px; color: #999;">Assurez-vous que votre navigateur autorise la lecture automatique.</p>
+            <button class="btn-start" onclick="startQuiz()">C'est parti ! 🚀</button>
+        </div>
+    </div>
+
     <!-- Musique de fond -->
     <audio id="backgroundMusic" loop>
         <source src="music.mp3" type="audio/mpeg">
@@ -453,11 +546,9 @@
         </div>
     </div>
 
-    <a href="https://ton-lien-ici.com" target="_blank" class="side-image-link">
+    <a href="http://quiz.jc-utt.fr/Guide_Prospection_2025" target="_blank" class="side-image-link">
         <img src="jc1.png" class="side-image">
     </a>
-
-    <script src="quiz.js"></script>
 
     <footer style="
         text-align: center;
@@ -474,5 +565,8 @@
         Pour une utilisation optimale,<br>
         veuillez utiliser une tablette ou un ordinateur.
     </div>
+
+    <!-- Charger le script JS externe qui contient startQuiz() -->
+    <script src="quiz.js"></script>
 </body>
 </html>

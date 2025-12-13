@@ -1,5 +1,5 @@
 const questions = [
-        {
+    {
         question: "Bienvenue au quiz de prospection de Junior Conseil UTT ! Prêt à tester vos connaissances ?",
         options: ["Oui, je suis prêt à devenir un expert en prospection !", "Non, je préfère rester dans l'ignorance éternelle."],
         correct: 0,
@@ -101,7 +101,6 @@ const questions = [
         correct: 1,
         video: "video16.mp4"
     }
-
 ];
 
 let state = {
@@ -109,25 +108,34 @@ let state = {
     score: 0,
     selectedAnswer: null,
     answered: false,
-    firstLoad: true
+    firstLoad: true,
+    quizStarted: false  // Nouveau flag pour savoir si le quiz a démarré
 };
 
+// Ne rien faire au chargement de la page - attendre le clic sur "C'est parti"
 document.addEventListener('DOMContentLoaded', () => {
-    // Démarrer la musique de fond
-    const backgroundMusic = document.getElementById('backgroundMusic');
-    backgroundMusic.volume = 0.3; // Volume à 30%
+    // Le quiz ne démarre pas automatiquement
+    console.log('Page chargée, en attente du démarrage...');
+});
+
+// Fonction appelée depuis le HTML quand on clique sur "C'est parti"
+function startQuiz() {
+    // Masquer la pop-up
+    document.getElementById('welcomeOverlay').classList.add('hidden');
     
-    // Tenter de démarrer la musique automatiquement
-    backgroundMusic.play().catch(() => {
-        // Si l'autoplay échoue, on démarre la musique au premier clic
-        document.body.addEventListener('click', function startMusic() {
-            backgroundMusic.play();
-            document.body.removeEventListener('click', startMusic);
-        }, { once: true });
+    // Démarrer la musique
+    const backgroundMusic = document.getElementById('backgroundMusic');
+    backgroundMusic.volume = 0.3;
+    backgroundMusic.play().catch(err => {
+        console.log('Autoplay musique échoué:', err);
     });
     
+    // Marquer le quiz comme démarré
+    state.quizStarted = true;
+    
+    // Lancer la première vidéo
     startNewVideo();
-});
+}
 
 function startNewVideo() {
     if (state.currentQuestion >= questions.length) {
@@ -333,20 +341,8 @@ function restartQuiz() {
         score: 0,
         selectedAnswer: null,
         answered: false,
-        firstLoad: true
-    };
-
-    document.getElementById('scoreValue').textContent = '0';
-    startNewVideo();
-}
-
-function restartQuiz() {
-    state = {
-        currentQuestion: 0,
-        score: 0,
-        selectedAnswer: null,
-        answered: false,
-        firstLoad: true
+        firstLoad: true,
+        quizStarted: true  // Le quiz reste démarré lors du restart
     };
 
     document.getElementById('scoreValue').textContent = '0';
@@ -370,7 +366,7 @@ function shareResult(event) {
         emoji = '🎓';
     }
     
-    const shareText = `J'ai fait ${scoreText} au Quiz Prospection JC-UTT ! ${emoji}\n\nÀ ton tour de tester tes connaissances :\nhttps://votre-site-quiz.com`;
+    const shareText = `J'ai fait ${scoreText} au Quiz Prospection JC-UTT ! ${emoji}\n\nÀ ton tour de tester tes connaissances :\nhttp://quiz.jc-utt.fr`;
     
     // Feedback visuel immédiat
     const btn = event.target;
