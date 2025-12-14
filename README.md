@@ -1,4 +1,4 @@
 # JC-UTT-quiz-prospection
 Un quiz en JavaScript permettant d'entrainer l'équipe de prospection de Junior Conseil UTT.
 
-Lien :
+Lien : <a href="quiz.jc-utt.fr" target="_blank" >quiz.jc-utt.fr</a>
